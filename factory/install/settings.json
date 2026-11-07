@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/factory-guard.py\"", "timeout": 10 }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(factory/bin/intake.sh:*)",
+      "Bash(factory/bin/merge.sh:*)",
+      "Bash(factory/bin/status.sh:*)",
+      "Bash(pytest:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(npm test:*)",
+      "Bash(npx vitest:*)"
+    ],
+    "deny": [
+      "Bash(factory/bin/approve.sh:*)",
+      "Bash(git push:*)",
+      "Edit(brain/risk-policy.md)",
+      "Write(brain/risk-policy.md)"
+    ]
+  }
+}

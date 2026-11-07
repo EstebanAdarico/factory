@@ -1,0 +1,31 @@
+# Entorno aislado para la fábrica. Cópialo como compose.yml y ajústalo a tu proyecto.
+# Uso:  docker compose up -d --build   →   docker compose exec factory claude
+services:
+  db:                                   # opcional: bórralo si tu proyecto no usa base de datos
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app_dev_only   # solo desarrollo local, no se expone fuera de compose
+      POSTGRES_DB: app
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 3s
+      retries: 20
+
+  factory:
+    build: { context: ., dockerfile: docker/factory.Dockerfile }
+    depends_on: { db: { condition: service_healthy } }
+    volumes:
+      - .:/workspace
+      - claude-home:/home/node/.claude  # login de Claude Code persistente
+    environment:
+      DATABASE_URL: postgresql+psycopg://app:app_dev_only@db:5432/app
+    ports:
+      - "127.0.0.1:8000:8000"           # API
+      - "127.0.0.1:5173:5173"           # Web
+
+volumes:
+  pgdata:
+  claude-home:

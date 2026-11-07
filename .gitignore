@@ -1,0 +1,6 @@
+.worktrees/
+factory/runs/*
+!factory/runs/.gitkeep
+node_modules/
+__pycache__/
+.env
